@@ -1,0 +1,125 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    text-align: center;
+    padding: 50px;   
+}
+
+.welcome-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+    width: 400px;
+    margin: 0 auto;
+}
+
+form{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+input[type="text"] {
+    margin: 10px 0;
+    padding: 10px;
+    width: 90%;
+    border: 1px solid #c00909;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+
+.category-container{
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+    width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+
+    button{
+        margin-top: 10px;
+    }
+}
+
+.question-container, .end-container{
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+    width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    button{
+        margin-top: 10px;
+    }
+}
+.ques-div{
+    border: 2px solid black;
+    p{
+        background-color: antiquewhite;
+        border-radius: 10px;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+    span{
+        display:inline-block;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        font-size: 1.3rem;
+        font-weight: bolder;
+        margin-bottom: 0.2rem;
+        color: green;
+    }
+}
+/* .question-div{
+    height: 20px;
+    width: 100%;
+    background-color: red;
+
+} */
+
+.sirfQues{
+    background-color: #fff;
+    padding: 5px 30px;
+    border: 2px solid green;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+    width: 400px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
+.nameD{
+    /* height: 10px; */
+    display: inline-block;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    width: 100%;
+    /* background-color: pink; */
+
+    span{
+       
+        background-color: #4CAF50;
+        border-radius: 5px;
+        color: white;
+        padding: 2px 16px;
+    }
+    span:hover{
+        background-color: #45a049;
+    }
+}

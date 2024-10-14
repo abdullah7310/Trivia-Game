@@ -5,10 +5,10 @@ let currentPlayer;
 
 
 player1Name = document.getElementById('player1').value;
-// console.log(player1Name);
+
 
 player2Name = document.getElementById('player2').value;
-// console.log(player2Name);
+
 
 document.getElementById('playerForm').addEventListener('submit', function (event) {
     event.preventDefault();
@@ -192,6 +192,8 @@ function displayQuestions(questions) {
             } else {
                 scores.player2 += getPointsForQuestion(currentQuestionIndex)
             }
+        }else{
+            alert("Wrong Answer");
         }
 
         currentQuestionIndex++;

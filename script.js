@@ -4,10 +4,10 @@ let selectedCategory = '';
 let currentPlayer;
 
 
-player1Name = document.getElementById('player1').value;
+// player1Name = document.getElementById('player1').value;
 
 
-player2Name = document.getElementById('player2').value;
+// player2Name = document.getElementById('player2').value;
 
 
 document.getElementById('playerForm').addEventListener('submit', function (event) {
@@ -15,9 +15,11 @@ document.getElementById('playerForm').addEventListener('submit', function (event
 
 
     player1Name = document.getElementById('player1').value;
+    player1Name = "Player 1 " + player1Name;
     // console.log(player1Name);
 
     player2Name = document.getElementById('player2').value;
+    player2Name = "Player 2 " + player2Name;
     // console.log(player2Name);
     currentPlayer = player1Name;
 
@@ -72,6 +74,8 @@ async function fetchQuestions(category) {
     try {
         const response = await fetch(`https://the-trivia-api.com/v2/questions?categories=${category.toLowerCase()}&limit=6&difficulty=easy,medium,hard`);
         const data = await response.json();
+        console.log('total question', data);
+
         loadingMessage.remove();
 
         console.log(data);
@@ -124,11 +128,11 @@ async function fetchQuestions(category) {
 
 
 
-player1Name = document.getElementById('player1').value;
-console.log(player1Name);
+// player1Name = document.getElementById('player1').value;
+// console.log(player1Name);
 
-player2Name = document.getElementById('player2').value;
-console.log(player2Name);
+// player2Name = document.getElementById('player2').value;
+// console.log(player2Name);
 
 let currentQuestionIndex = 0;
 
@@ -171,14 +175,35 @@ function displayQuestions(questions) {
 
     async function showOptions(container, question) {
         const correctButton = document.createElement('button');
+        correctButton.classList.add("correctAns");
         correctButton.textContent = question.correctAnswer;
-        correctButton.addEventListener('click', () => handleAnswer(question.correctAnswer, question.correctAnswer));
+        correctButton.addEventListener('click', () => {
+            document.querySelector(".correctAns").style.backgroundColor = "blue";
+            document.querySelectorAll(".wrong").forEach(btn => {
+                btn.style.backgroundColor = "red";
+            });
+            // document.querySelectorAll(".wrongAns").style.backgroundColor = "red";
+            setTimeout(() => {
+                handleAnswer(question.correctAnswer, question.correctAnswer);
+            }, 1000)
+            // handleAnswer(question.correctAnswer, question.correctAnswer)
+        });
         container.appendChild(correctButton);
 
         question.incorrectAnswers.forEach(answer => {
             const answerButton = document.createElement('button');
+            
+            answerButton.classList.add("wrong");
             answerButton.textContent = answer;
-            answerButton.addEventListener('click', () => handleAnswer(answer, question.correctAnswer));
+            answerButton.addEventListener('click', () => {
+                document.querySelector(".correctAns").style.backgroundColor = "blue";
+                document.querySelectorAll(".wrong").forEach(btn => {
+                    btn.style.backgroundColor = "red";
+                });
+                setTimeout(() => {
+                    handleAnswer(answer, question.correctAnswer);
+                }, 1000)
+            });
             container.appendChild(answerButton);
         });
 
@@ -192,8 +217,9 @@ function displayQuestions(questions) {
             } else {
                 scores.player2 += getPointsForQuestion(currentQuestionIndex)
             }
-        }else{
-            alert("Wrong Answer");
+        } else {
+            // alert("Wrong Answer");
+
         }
 
         currentQuestionIndex++;
@@ -243,12 +269,12 @@ function endGame() {
         resultMessage.textContent = 'It\'s a tie!!';
         endContainer.appendChild(resultMessage);
     }
-    
+
     const homeButton = document.createElement("button");
     homeButton.classList.add("Home");
     homeButton.innerHTML = "Home";
     endContainer.appendChild(homeButton);
-    document.querySelector(".Home").addEventListener("click",()=> location.reload());
+    document.querySelector(".Home").addEventListener("click", () => location.reload());
 }
 function shuffleOptions(container) {
     for (let i = container.children.length; i >= 0; i--) {

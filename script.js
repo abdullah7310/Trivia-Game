@@ -1,7 +1,8 @@
 let player1Name = '';
 let player2Name = '';
-let selectedCategory = '';
+let selectedCategory = [];
 let currentPlayer;
+let categories = [];
 
 
 // player1Name = document.getElementById('player1').value;
@@ -31,37 +32,55 @@ document.getElementById('playerForm').addEventListener('submit', function (event
     }
 });
 // console.log(player1Name);
-const categories = ['General Knowledge', 'Science', 'History', 'Geography', 'Music', 'Sports'];
+
+
 
 
 function showCategorySelection() {
     document.body.innerHTML = '';
-
-
-    // document.querySelector('.welcome-container').style.display = 'none';
     const categoryContainer = document.createElement('div');
     categoryContainer.classList.add('category-container');
     const title = document.createElement('h2');
     title.textContent = 'Select a Category';
     categoryContainer.appendChild(title);
-    // const categories = ['General Knowledge','Science','History','Geography','Music','Sports'];
+    categories = [];
+   
 
-    categories.forEach(category => {
-        const button = document.createElement('button');
-        button.textContent = category;
-        button.addEventListener('click', function () {
-            selectedCategory = category;
-            const categoryIndex = categories.indexOf(category);
-            categories.splice(categoryIndex, 1);
-            console.log(categories);
+    fetchCategories()
+    async function fetchCategories() {
+        let response = await fetch('https://the-trivia-api.com/v2/categories');
+        let data = await response.json();
+        console.log("this is category data", data);
+        
+            categories = [];
+        
+        
+       
+        for( let category in data) {
+             categories.push(category);
+            const button = document.createElement('button');
+            button.textContent = category;
 
+            button.addEventListener('click', function () {
 
-            fetchQuestions(category);
-        })
-        categoryContainer.appendChild(button);
-    })
+                if (!selectedCategory.includes(category)){
+                     selectedCategory.push(category);
+                     const categoryIndex = categories.indexOf(category);
+                     categories.splice(categoryIndex, 1);
+                console.log("this is before selecting categry",categories);
+                console.log("this is after selcting category",selectedCategory);
 
-    document.body.appendChild(categoryContainer);
+                fetchQuestions(category);
+                }else{
+                    alert("you have chosen this category!\n Please choose other category")
+                }
+               
+            });
+            categoryContainer.appendChild(button);
+            }
+          
+        }
+  document.body.appendChild(categoryContainer);
 }
 
 async function fetchQuestions(category) {
@@ -72,17 +91,13 @@ async function fetchQuestions(category) {
     document.body.appendChild(loadingMessage);
 
     try {
-        const response = await fetch(`https://the-trivia-api.com/v2/questions?categories=${category.toLowerCase()}&limit=6&difficulty=easy,medium,hard`);
+        const response = await fetch(`https://the-trivia-api.com/v2/questions?categories=${category}&limit=100&difficulty=easy,medium,hard`);
         const data = await response.json();
         console.log('total question', data);
 
         loadingMessage.remove();
 
         console.log(data);
-        data.forEach(check => {
-            console.log(check.difficulty);
-
-        })
 
 
         let easyQuestions = data.filter(q => q.difficulty === 'easy');
@@ -94,28 +109,7 @@ async function fetchQuestions(category) {
         hardQuestions = hardQuestions.slice(0, 2);
 
 
-        let remainingQuestions = data.filter(q => ![...easyQuestions, ...mediumQuestions, ...hardQuestions].includes(q));
-
-        if (easyQuestions.length < 2) {
-            easyQuestions = easyQuestions.concat(remainingQuestions.slice(0, 2 - easyQuestions.length));
-            remainingQuestions = remainingQuestions.slice(2 - easyQuestions.length);
-        }
-
-        if (mediumQuestions.length < 2) {
-            mediumQuestions = mediumQuestions.concat(remainingQuestions.slice(0, 2 - mediumQuestions.length));
-            remainingQuestions = remainingQuestions.slice(2 - mediumQuestions.length);
-        }
-
-        if (hardQuestions.length < 2) {
-            hardQuestions = hardQuestions.concat(remainingQuestions.slice(0, 2 - hardQuestions.length));
-        }
-
         const questions = [...easyQuestions, ...mediumQuestions, ...hardQuestions];
-
-        if (questions.length < 6) {
-            alert("Unable to fetch enough questions for the game. Please try again.");
-            return;
-        }
 
         displayQuestions(questions);
 
@@ -144,6 +138,8 @@ function displayQuestions(questions) {
     showQuestion(questions[currentQuestionIndex])
 
     async function showQuestion(question) {
+        console.log("undefined very  ", question);
+
         document.body.innerHTML = '';
 
 
@@ -192,7 +188,7 @@ function displayQuestions(questions) {
 
         question.incorrectAnswers.forEach(answer => {
             const answerButton = document.createElement('button');
-            
+
             answerButton.classList.add("wrong");
             answerButton.textContent = answer;
             answerButton.addEventListener('click', () => {
@@ -254,7 +250,7 @@ function endGame() {
     document.body.innerHTML = '<div class="end-container"></div>';
     const resultMessage = document.createElement('h2');
     const resultMessage2 = document.createElement('h2');
-    const endContainer = document.querySelector('.end-container');
+    const endContainer = document.querySelector('.end-container ');
     if (scores.player1 > scores.player2) {
         resultMessage.textContent = `${player1Name} wins with ${scores.player1} points !!`;
         resultMessage2.textContent = ` ${player2Name} Lose with ${scores.player2} points !!!`;
@@ -281,3 +277,5 @@ function shuffleOptions(container) {
         container.appendChild(container.children[Math.random() * i | 0]);
     }
 }
+
+

@@ -5,11 +5,6 @@ let currentPlayer;
 let categories = [];
 
 
-// player1Name = document.getElementById('player1').value;
-
-
-// player2Name = document.getElementById('player2').value;
-
 
 document.getElementById('playerForm').addEventListener('submit', function (event) {
     event.preventDefault();
@@ -17,11 +12,11 @@ document.getElementById('playerForm').addEventListener('submit', function (event
 
     player1Name = document.getElementById('player1').value;
     player1Name = "Player 1 " + player1Name;
-    // console.log(player1Name);
+
 
     player2Name = document.getElementById('player2').value;
     player2Name = "Player 2 " + player2Name;
-    // console.log(player2Name);
+
     currentPlayer = player1Name;
 
 
@@ -31,57 +26,70 @@ document.getElementById('playerForm').addEventListener('submit', function (event
         alert('Please enter both player names!');
     }
 });
-// console.log(player1Name);
-
 
 
 
 function showCategorySelection() {
     document.body.innerHTML = '';
-    const categoryContainer = document.createElement('div');
-    categoryContainer.classList.add('category-container');
+    let categoryContainer = document.querySelector('.category-container');
+
+    if (!categoryContainer) {
+        categoryContainer = document.createElement('div');
+        categoryContainer.classList.add('category-container');
+        document.body.appendChild(categoryContainer);
+    }
+
+    categoryContainer.innerHTML = ''; 
+
     const title = document.createElement('h2');
     title.textContent = 'Select a Category';
     categoryContainer.appendChild(title);
+
     categories = [];
-   
 
-    fetchCategories()
+    fetchCategories();
+
     async function fetchCategories() {
-        let response = await fetch('https://the-trivia-api.com/v2/categories');
-        let data = await response.json();
-        console.log("this is category data", data);
-        
+        try {
+            let response = await fetch('https://the-trivia-api.com/v2/categories');
+            let data = await response.json();
+            console.log("This is category data", data);
+
             categories = [];
-        
-        
-       
-        for( let category in data) {
-             categories.push(category);
-            const button = document.createElement('button');
-            button.textContent = category;
 
-            button.addEventListener('click', function () {
-
-                if (!selectedCategory.includes(category)){
-                     selectedCategory.push(category);
-                     const categoryIndex = categories.indexOf(category);
-                     categories.splice(categoryIndex, 1);
-                console.log("this is before selecting categry",categories);
-                console.log("this is after selcting category",selectedCategory);
-
-                fetchQuestions(category);
-                }else{
-                    alert("you have chosen this category!\n Please choose other category")
+            for (let category in data) {
+                
+                if (selectedCategory.includes(category)) {
+                    continue; 
                 }
-               
-            });
-            categoryContainer.appendChild(button);
+
+                categories.push(category);
+
+                const button = document.createElement('button');
+                button.textContent = category;
+                categoryContainer.appendChild(button);
+
+                button.addEventListener('click', function () {
+                    if (!selectedCategory.includes(category)) {
+                        button.remove(); 
+                        selectedCategory.push(category);
+
+                        console.log("Before selecting category:", categories);
+                        console.log("After selecting category:", selectedCategory);
+
+                        fetchQuestions(category); 
+                    } else {
+                        alert("You have already chosen this category! Please choose another category");
+                    }
+                });
+                
             }
-          
+        } catch (error) {
+            console.error("Error fetching categories: ", error);
         }
-  document.body.appendChild(categoryContainer);
+    }
 }
+
 
 async function fetchQuestions(category) {
     document.querySelector('.category-container').style.display = 'none';
@@ -90,43 +98,22 @@ async function fetchQuestions(category) {
     loadingMessage.textContent = 'Fetching questions.....';
     document.body.appendChild(loadingMessage);
 
-    try {
-        const response = await fetch(`https://the-trivia-api.com/v2/questions?categories=${category}&limit=100&difficulty=easy,medium,hard`);
+    let difficultyLevelQues= ["easy","medium","hard"]
+    const questions = [];
+    for(let i =0; i<difficultyLevelQues.length;i++){
+        const response = await fetch(`https://the-trivia-api.com/v2/questions?categories=${category}&limit=2&difficulties=${difficultyLevelQues[i]}`);
         const data = await response.json();
-        console.log('total question', data);
-
-        loadingMessage.remove();
-
-        console.log(data);
-
-
-        let easyQuestions = data.filter(q => q.difficulty === 'easy');
-        let mediumQuestions = data.filter(q => q.difficulty === 'medium');
-        let hardQuestions = data.filter(q => q.difficulty === 'hard');
-
-        easyQuestions = easyQuestions.slice(0, 2);
-        mediumQuestions = mediumQuestions.slice(0, 2);
-        hardQuestions = hardQuestions.slice(0, 2);
-
-
-        const questions = [...easyQuestions, ...mediumQuestions, ...hardQuestions];
-
-        displayQuestions(questions);
-
-    } catch (error) {
-        console.log("Error fetching questions: ", error);
-        loadingMessage.textContent = "Error fetching questions. Please try again.";
+        console.log(difficultyLevelQues[i]);
+        
+        console.log("this is api fetch data",data);
+        questions.push(...data)
+        
     }
+    displayQuestions(questions )
+    
+
 }
 
-
-
-
-// player1Name = document.getElementById('player1').value;
-// console.log(player1Name);
-
-// player2Name = document.getElementById('player2').value;
-// console.log(player2Name);
 
 let currentQuestionIndex = 0;
 
@@ -158,11 +145,7 @@ function displayQuestions(questions) {
 
         const questionContainer = document.createElement('div');
         questionContainer.classList.add('question-container');
-        // let quesDiv = document.createElement('div');
-        // quesDiv.classList.add('question-div');
 
-        // quesDiv.appendChild(questionText);
-        // questionContainer.appendChild(quesDiv);
 
         document.body.appendChild(questionContainer);
         await showOptions(questionContainer, question);
@@ -226,9 +209,10 @@ function displayQuestions(questions) {
             showQuestion(questions[currentQuestionIndex])
         } else {
             currentQuestionIndex = 0;
-            if (categories.length == 0) {
+            if (selectedCategory.length == 10) {
                 endGame()
             } else {
+                
                 document.body.innerHTML = '<button class="chooseAnotherCategory">choose another categary</button> <button class="endGame" >End Game</button>';
                 document.querySelector(".chooseAnotherCategory").addEventListener('click', showCategorySelection);
                 document.querySelector(".endGame").addEventListener('click', endGame);

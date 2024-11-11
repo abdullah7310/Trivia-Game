@@ -4,8 +4,6 @@ let selectedCategory = [];
 let currentPlayer;
 let categories = [];
 
-
-
 document.getElementById('playerForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
@@ -125,7 +123,7 @@ function displayQuestions(questions) {
     showQuestion(questions[currentQuestionIndex])
 
     async function showQuestion(question) {
-        console.log("undefined very  ", question);
+        // console.log("undefined very  ", question);
 
         document.body.innerHTML = '';
 
